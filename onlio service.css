@@ -1,0 +1,270 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+/* body{
+  background-image: url(./image.css/2832316-hd_1920_1080_30fps.mp4);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+} */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.big-video{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+
+}
+
+.baharak{
+    width: 100%;
+    height: 100vh;
+    /* background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.40)); */
+    background-position: center;
+    background-size: center;
+}
+
+button{
+    width: 200px;
+    padding: 10px;
+    margin: 20px 5px;
+    text-align: center;
+    border-radius: 25px;
+    color: rgb(5, 5, 5);
+    border: 2px;
+    font-size: 20px;
+    cursor:pointer ;
+    font-weight: 600;
+    
+}
+
+button:hover{
+    background: rgb(0, 192, 226);
+    transition: 0.5s;
+}
+
+.manegar{
+    align-items: center;
+    float: right;
+}
+.h2{
+    text-align: center;
+}
+.h2 h1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:center ;
+    gap: 10px;
+    font-size: 5em;
+    color: #ebebe2;
+}
+
+.h2 h1 span {
+    opacity: 0;
+    transform: translateY(50px);
+    display: inline-block;
+    animation: moveIn 1s forwards;
+}
+
+/* انیمیشن با تاخیر برای هر کلمه */
+.h2 h1 span:nth-child(1) { animation-delay: 0s; }
+.h2 h1 span:nth-child(2) { animation-delay: 0.2s; }
+
+
+
+@keyframes moveIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.border1 {
+      
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(15, 15, 15, 0.1);
+      overflow: hidden;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* عنوان */
+    h1 {
+      text-align: center;
+      color: #e67e22;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    /* جدول اصلی */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    /* سر جدول */
+    thead {
+      background-color: #ee5c07;
+      color: rgb(236, 228, 228);
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      color: white;
+      font-size: large;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 800;
+    }
+    th, td:hover{
+        color: black;
+    }
+
+    th {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ردیف‌ها */
+    tbody tr {
+      border-bottom: 1px solid #e0cece;
+      transition: background-color 0.2s ease;
+    }
+
+    /* رنگ هنگام حرکت موس */
+    tbody tr:hover {
+      background-color: #df8337;
+    }
+
+    /* عکس‌ها */
+    td img {
+      border-radius: 8px;
+      width: 120px;
+      height: 90px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    /* وقتی روی عکس بروی کمی بزرگ می‌شود */
+    td img:hover {
+      transform: scale(1.05);
+    }
+
+    /* قیمت‌ها بولد و رنگی */
+    td:last-child {
+      color: #f2f4f2;
+      font-weight: 600;
+    }
+
+     .form-container {
+    /* background: white; */
+    width: 90%;
+    max-width: 500px;
+    padding: 30px;
+    margin: 40px auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    text-align: left;
+    float: left;
+  }
+
+  /* 🧾 عنوان */
+  .form-container h2 {
+    text-align: center;
+    color: #ff5e62;
+    font-size: 26px;
+    margin-bottom: 25px;
+  }
+
+  /* 🧍‍♂️ لیبل‌ها */
+  label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  /* ✏️ ورودی‌ها */
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 5px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s ease;
+  }
+
+  /* وقتی کاربر داخل input کلیک کند */
+  input:focus, select:focus {
+    border-color: #ff5e62;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 94, 98, 0.3);
+  }
+
+
+
+  /* 📞 بخش تماس */
+  .contact-info {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+  }
+
+  .contact-info a {
+    display: block;
+    text-decoration: none;
+    color: #ffffff;
+    margin: 5px 0;
+    transition: color 0.3s;
+  }
+
+  .contact-info a:hover {
+    color: #f26b6b;
+  }
+
+  /* ⚙️ استایل مدیریتی */
+  .admin-controls {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .admin-controls button {
+    width: auto;
+    padding: 8px 16px;
+    margin: 5px;
+    background-color: #f9f4f4;
+  }
+
+  .admin-controls button:hover {
+    background-color: #38f5f5;
+  }
+
+  /* 🌍 واکنش‌گرا برای موبایل */
+  @media (max-width: 500px) {
+    .form-container {
+      padding: 20px;
+    }
+    button {
+      font-size: 15px;
+    }
+  }

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>گالری تصاویر (افزودن / حذف)</title>
+  <style>
+    :root{
+      --bg:#0f172a; --card:#131f37; --muted:#e0e3e8; --accent:#348ae1e9; 
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,'Noto Sans',"Helvetica Neue",Arial; background:linear-gradient(180deg,#071024 0%, #376396 100%); color:#f0f1f3; margin:0; padding:24px}
+    .ali{ width: 100px; padding: 15px; margin: 30px 5px; text-align: center; border-radius: 25px; color: #071024; border: 2px; font-size: 20px; cursor: pointer; font-weight: 600; }
+    .ali:hover{ background: rgb(15, 168, 238); transition: 0.5s; color: white;}
+
+    .container{max-width:980px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    h1{font-size:20px;margin:0}
+    p.lead{color:var(--muted);margin:4px 0 12px;font-size:14px}
+    
+
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{background:var(--accent);color:#eedede;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:600}
+    .btn.ghost{background:var(--accent);border:0 solid rgba(176, 58, 58, 0.06)}
+
+    /* Drop area */
+    .drop-area{border:2px dashed rgba(11, 3, 3, 0.04);padding:18px;border-radius:10px;margin:14px 0;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .drop-area.dragover{background:rgba(190, 104, 104, 0.02);border-color:rgba(76, 163, 249, 0.6)}
+    .drop-area small{color:var(--muted)}
+
+    /* Gallery grid */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
+    .card{background:var(--card);border-radius:10px;overflow:hidden;position:relative;padding:6px}
+    .card img{display:block;width:100%;height:140px;object-fit:cover;border-radius:8px}
+    .card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .card button{background:transparent;border:0;color:var(--muted);cursor:pointer}
+    .card .delete{color:#ff7b7b;font-weight:700}
+
+    /* Modal view */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.7);z-index:60}
+    .modal.open{display:flex}
+    .modal img{max-width:95%;max-height:92%;border-radius:8px;box-shadow:0 8px 30px rgba(56, 84, 207, 0.6)}
+
+    /* Responsive tweaks */
+    @media (max-width:480px){ .card img{height:110px} .btn{padding:6px 10px} }
+
+    /* small helper */
+    .muted{color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+
+        <div>
+            <a href="./watan.html">
+            <button type="button" class="ali">Back</button>
+            </a>
+        </div>
+      <div>
+        <h1>Galary</h1>
+        <p class="lead">Add the Photo if you need you can Delet the Photo</p>
+      </div>
+      <div class="controls">
+        <label class="btn" for="fileInput">Add the Photos</label>
+        <input id="fileInput" type="file" accept="image/*" multiple style="display:none">
+        <button id="clearAll" class="btn ghost">Delet the Photos</button>
+      </div>
+    </header>
+
+    <div id="dropArea" class="drop-area" aria-label="drop area">
+      <div>If you like to add Photo please select the add Photo</div>
+      <small>The Storage of Thsi Wesite is 5m</small>
+    </div>
+
+    <div id="gallery" class="gallery" aria-live="polite"></div>
+
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <img id="modalImg" src="" alt="">
+    </div>
+
+   
+  </div>
+
+  <script>
+    // ساده و کاربردی: تصاویر را در localStorage نگه می‌داریم
+    const STORAGE_KEY = 'galleryImages_v1';
+    const fileInput = document.getElementById('fileInput');
+    const gallery = document.getElementById('gallery');
+    const dropArea = document.getElementById('dropArea');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const clearAllBtn = document.getElementById('clearAll');
+
+    let images = loadFromStorage();
+    renderGallery();
+
+    fileInput.addEventListener('change', async (e)=>{
+      const files = Array.from(e.target.files);
+      await addFiles(files);
+      fileInput.value = '';
+    });
+
+    // drag & drop
+    ['dragenter','dragover'].forEach(ev => dropArea.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); dropArea.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(ev => dropArea.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); dropArea.classList.remove('dragover'); }));
+    dropArea.addEventListener('drop', async (e)=>{
+      const dt = e.dataTransfer;
+      const files = Array.from(dt.files).filter(f => f.type.startsWith('image/'));
+      if(files.length) await addFiles(files);
+    });
+
+    // add files -> convert to dataURL and save
+    async function addFiles(files){
+      for(const f of files){
+        try{
+          const data = await readFileAsDataURL(f);
+          images.push({id:cryptoRandomId(), name:f.name, data});
+          // limit precaution: if images become very big, older ones removed (optional)
+          if(images.length>200) images.shift();
+        }catch(err){ console.warn('خواندن فایل شکست خورد', err); }
+      }
+      saveToStorage();
+      renderGallery();
+    }
+
+    function readFileAsDataURL(file){
+      return new Promise((res,rej)=>{
+        const r = new FileReader();
+        r.onload = ()=>res(r.result);
+        r.onerror = ()=>rej(new Error('File read error'));
+        r.readAsDataURL(file);
+      });
+    }
+
+    function renderGallery(){
+      gallery.innerHTML = '';
+      if(images.length===0){
+        gallery.innerHTML = '<div class="muted">هنوز تصویری اضافه نشده است.</div>';
+        return;
+      }
+      images.forEach((img, idx)=>{
+        const card = document.createElement('div'); card.className='card';
+        const image = document.createElement('img'); image.src = img.data; image.alt = img.name || 'تصویر';
+        image.tabIndex = 0;
+        image.addEventListener('click', ()=>openModal(img.data, img.name));
+        image.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openModal(img.data,img.name); });
+
+        const meta = document.createElement('div'); meta.className='meta';
+        const title = document.createElement('div'); title.textContent = img.name || `تصویر ${idx+1}`;
+        title.style.fontSize='13px'; title.style.color='var(--muted)'; title.style.overflow='hidden'; title.style.textOverflow='ellipsis'; title.style.whiteSpace='nowrap';
+
+        const btns = document.createElement('div');
+        const del = document.createElement('button'); del.className='delete'; del.textContent=" X";
+        del.addEventListener('click', ()=>{ if(confirm('Are you sure you whant delet Photo')){ images.splice(idx,1); saveToStorage(); renderGallery(); }});
+        btns.appendChild(del);
+
+        meta.appendChild(title); meta.appendChild(btns);
+        card.appendChild(image); card.appendChild(meta);
+        gallery.appendChild(card);
+      });
+    }
+
+    function openModal(src, alt){ modalImg.src = src; modalImg.alt = alt || ''; modal.classList.add('open'); }
+    modal.addEventListener('click', ()=>{ modal.classList.remove('open'); modalImg.src=''; });
+
+    clearAllBtn.addEventListener('click', ()=>{
+      if(confirm('همه تصاویر پاک شوند؟')){ images = []; saveToStorage(); renderGallery(); }
+    });
+
+    function saveToStorage(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(images)); }
+      catch(e){ console.warn('ذخیره در localStorage ممکن نشد:', e); }
+    }
+    function loadFromStorage(){
+      try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
+      catch(e){ console.warn('خواندن از localStorage خطا داد', e); return []; }
+    }
+
+    function cryptoRandomId(){ return Math.random().toString(36).slice(2,9); }
+  </script>
+</body>
+</html>

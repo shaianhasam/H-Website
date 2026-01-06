@@ -1,0 +1,130 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+.ali{
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.40));
+    background-position: center;
+    background-size: center;
+}
+button{
+    width: 200px;
+    padding: 15px;
+    margin: 20px 5px;
+    text-align: center;
+    border-radius: 25px;
+    color: black;
+    border: 2px;
+    font-size: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+button:hover{
+    background: rgb(0, 192, 226);
+    transition: 0.5s;
+}
+.watan h1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    font-size: 2em;
+    color: #f8f5f5;
+}
+
+.watan h1 span {
+    opacity: 0;
+    transform: translateY(50px);
+    display: inline-block;
+    animation: moveIn 1s forwards;
+}
+
+/* انیمیشن با تاخیر برای هر کلمه */
+.watan h1 span:nth-child(1) { animation-delay: 0s; }
+.watan h1 span:nth-child(2) { animation-delay: 0.2s; }
+.watan h1 span:nth-child(3) { animation-delay: 0.4s; }
+.watan h1 span:nth-child(4) { animation-delay: 0.6s; }
+.watan h1 span:nth-child(5) { animation-delay: 0.8s; }
+.watan h1 span:nth-child(6) { animation-delay: 1s; }
+
+@keyframes moveIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.shaiq {
+    background-color: #6f6e6e;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.shaiq ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.shaiq ul li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.shaiq ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+}
+
+.shaiq ul li a:hover {
+    background-color: #f3ecec;
+    color: #0f0e0e;
+    border-radius: 5px;
+    transform: translateY(-3px);
+}
+
+/* بخش badakhsh */
+.badakhsh {
+    margin: 50px auto;
+    width: 80%;
+    padding: 40px;
+    /* background: linear-gradient(135deg, #5a5959, #f5f2f1); */
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f6f4f4;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    animation: fadeIn 2s ease forwards;
+}
+
+/* انیمیشن متن */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.ali video{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+
+}
+@media(min-aspect-ratio: 16/9){
+    .ali video{
+        width: 100%;
+        height: auto;
+    }
+}

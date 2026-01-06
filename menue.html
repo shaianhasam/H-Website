@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>منوی غذا</title>
+  <link rel="stylesheet" href="./menue.css">
+  
+</head>
+<body>
+  <div class="baharak">
+    <video class="big-video" autoplay muted loop>
+      <source src="./image.css/3626148-uhd_4096_2160_25fps.mp4" >
+      the can saport
+    </video>
+    <div>
+      <a href="./watan.html">
+     <button type="button">Back</button>
+      </a>
+    
+      <button class="manegar">Manegar</button>
+      <button style="display:none">exait</button>
+      <button style="display:none">exchange</button>
+    </div>
+    <div class="h2">
+     <h1 >
+      <span>Food</span>
+      <span>Menu</span>
+     </h1>
+
+    </div>
+    
+<div class="border1">
+    <table border="1" cellpadding="6" cellspacing="0" style="width:100%; text-align:left; font-size:14px;">
+  <thead>
+    <tr>
+      <th>Image</th>
+      <th>Food Name</th>
+      <th>Price (AFN)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="https://picsum.photos/id/1080/120/90" alt="Kebab" width="120" height="90"></td>
+      <td>Kabab Koobideh</td>
+      <td>120 AFNN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/292/120/90" alt="Joojeh" width="120" height="90"></td>
+      <td>Joojeh Kabab</td>
+      <td>110 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1025/120/90" alt="Ghorme" width="120" height="90"></td>
+      <td>Ghorme Sabzi</td>
+      <td>90 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/433/120/90" alt="Chicken" width="120" height="90"></td>
+      <td>Chicken with Rice</td>
+      <td>95 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1084/120/90" alt="Fish" width="120" height="90"></td>
+      <td>Fried Fish</td>
+      <td>130 AFNN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1011/120/90" alt="Salad" width="120" height="90"></td>
+      <td>Season Salad</td>
+      <td>30000</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1050/120/90" alt="Soup" width="120" height="90"></td>
+      <td>Daily Soup</td>
+      <td>25 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1040/120/90" alt="Veggie" width="120" height="90"></td>
+      <td>Vegetable Plate</td>
+      <td>60 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1062/120/90" alt="Pizza" width="120" height="90"></td>
+      <td>Special Pizza</td>
+      <td>140 AFN</td>
+    </tr>
+    <tr>
+      <td><img src="https://picsum.photos/id/1081/120/90" alt="Dessert" width="120" height="90"></td>
+      <td>Homemade Dessert</td>
+      <td>20000</td>
+    </tr>
+  </tbody>
+</table>
+</div> <br>
+<div class="p1">
+<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore eum laborum ipsam ut rerum commodi esse repellat ullam excepturi! Voluptates fugiat voluptate, nihil atque culpa similique sit soluta tempore neque.</p>
+<br>
+<ul>
+    <li>Also we had Onlion Service</li>
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt nemo soluta cupiditate aliquid obcaecati facilis, exercitationem illum eius? Ratione adipisci possimus officia dicta omnis minima, voluptas vitae fugit rem eveniet.</p>
+    <br>
+    <p>If you likt to Serve Onlion </p>
+    
+    <a href="./onlin service.html">click here</a>
+    
+</ul>
+</div>
+
+  </div>
+
+  <script>
+    // *** فقط برای نمونه: رمز پیش‌فرض (تغییر دهید) ***
+    const ADMIN_PASSWORD = 'admin123'; // حتماً در محیط واقعی این رمز را سرور-ساید و امن کنید
+
+    const btnEnter = document.getElementById('btn-enter-admin');
+    const btnExit = document.getElementById('btn-exit-admin');
+    const btnSave = document.getElementById('btn-save');
+    const priceEls = document.querySelectorAll('.price');
+
+    // بارگزاری قیمت‌های ذخیره‌شده (localStorage)
+    function loadSavedPrices(){
+      try{
+        const raw = localStorage.getItem('menuPrices');
+        if(!raw) return;
+        const obj = JSON.parse(raw);
+        priceEls.forEach(el=>{
+          const key = el.dataset.key;
+          if(obj[key] !== undefined) el.textContent = obj[key];
+        });
+      }catch(e){console.warn('خطا در خواندن قیمت‌ها',e)}
+    }
+
+    // ذخیره قیمت‌ها
+    function savePrices(){
+      const obj = {};
+      priceEls.forEach(el=>{ obj[el.dataset.key] = el.textContent.trim(); });
+      localStorage.setItem('menuPrices', JSON.stringify(obj));
+      alert('قیمت‌ها ذخیره شد');
+    }
+
+    // ورود مدیر
+    btnEnter.addEventListener('click', ()=>{
+      const p = prompt('رمز مدیر را وارد کنید:');
+      if(p === null) return; // لغو
+      if(p === ADMIN_PASSWORD){
+        enableEditing(true);
+        btnEnter.style.display = 'none';
+        btnExit.style.display = 'inline-block';
+        btnSave.style.display = 'inline-block';
+        alert('حالت مدیریت فعال شد — اکنون می‌توانید قیمت‌ها را ویرایش کنید.');
+      } else {
+        alert('رمز نادرست');
+      }
+    });
+
+    btnExit.addEventListener('click', ()=>{
+      enableEditing(false);
+      btnEnter.style.display = 'inline-block';
+      btnExit.style.display = 'none';
+      btnSave.style.display = 'none';
+    });
+
+    btnSave.addEventListener('click', ()=>{
+      // اعتبارسنجی ساده: قیمت‌ها باید عددی باشند
+      for(const el of priceEls){
+        const v = el.textContent.trim();
+        if(!/^\d+$/.test(v)){
+          alert('قیمت‌ها باید فقط شامل اعداد (تومان) باشند. لطفاً اصلاح کنید.');
+          return;
+        }
+      }
+      savePrices();
+    });
+
+    function enableEditing(enable){
+      priceEls.forEach(el=>{
+        el.contentEditable = enable;
+        el.style.outline = enable ? '2px dashed #0b76ef' : 'none';
+        el.setAttribute('aria-readonly', enable ? 'false' : 'true');
+      });
+    }
+
+    // بارگذاری اولیه
+    loadSavedPrices();
+    // در صورتی که لازم است می‌توانید در آینده تغییرات را به سرور ارسال کنید.
+  </script>
+</body>
+</html>

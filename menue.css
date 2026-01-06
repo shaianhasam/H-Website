@@ -1,0 +1,227 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+/* body{
+  background-image: url(./image.css/2832316-hd_1920_1080_30fps.mp4);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+} */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.big-video{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+
+}
+
+.baharak{
+    width: 100%;
+    height: 100vh;
+    /* background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.40)); */
+    background-position: center;
+    background-size: center;
+}
+
+button{
+    width: 200px;
+    padding: 10px;
+    margin: 20px 5px;
+    text-align: center;
+    border-radius: 25px;
+    color: black;
+    border: 2px;
+    font-size: 20px;
+    cursor:pointer ;
+    font-weight: 600;
+    
+}
+
+button:hover{
+    background: rgb(0, 192, 226);
+    transition: 0.5s;
+}
+
+.manegar{
+    align-items: center;
+    float: right;
+}
+.h2{
+    text-align: center;
+}
+.h2 h1 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:center ;
+    gap: 10px;
+    font-size: 5em;
+    color: #ebebe2;
+}
+
+.h2 h1 span {
+    opacity: 0;
+    transform: translateY(50px);
+    display: inline-block;
+    animation: moveIn 1s forwards;
+}
+
+/* انیمیشن با تاخیر برای هر کلمه */
+.h2 h1 span:nth-child(1) { animation-delay: 0s; }
+.h2 h1 span:nth-child(2) { animation-delay: 0.2s; }
+
+
+
+@keyframes moveIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.border1 {
+      
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* عنوان */
+    h1 {
+      text-align: center;
+      color: #e67e22;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    /* جدول اصلی */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    /* سر جدول */
+    thead {
+      background-color: #e67e22;
+      color: white;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ردیف‌ها */
+    tbody tr {
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.2s ease;
+    }
+
+    /* رنگ هنگام حرکت موس */
+    tbody tr:hover {
+      background-color: #fdf2e9;
+    }
+
+    /* عکس‌ها */
+    td img {
+      border-radius: 8px;
+      width: 120px;
+      height: 90px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    /* وقتی روی عکس بروی کمی بزرگ می‌شود */
+    td img:hover {
+      transform: scale(1.05);
+    }
+
+    /* قیمت‌ها بولد و رنگی */
+    td:last-child {
+      color: #2bb765;
+      font-weight: 600;
+    }
+     .p1 {
+     
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 25px 30px;
+      /* max-width: ; */
+      line-height: 1.;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* هنگام حرکت موس روی کارت */
+    .p1:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(221, 218, 218, 0.15);
+    }
+
+    /* تیتر پاراگراف */
+    .p1 p:first-of-type {
+      font-size: 16px;
+      color: #eee9e9;
+      margin-bottom: 20px;
+    }
+
+    /* لیست */
+    .p1 ul {
+      list-style-type: "🍴 ";
+      padding-left: 25px;
+      margin: 0;
+    }
+
+    .p1 li {
+      font-weight: bold;
+      color: #e67e22;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    /* پاراگراف‌های داخل لیست */
+    .p1 ul p {
+      margin: 8px 0 16px 0;
+      font-size: 15px;
+      color: #eae4e4;
+    }
+
+    /* لینک */
+    .p1 a {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #e67e22;
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .p1 a:hover {
+      background-color: #d35400;
+    }
+
+   
