@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دیکشنری انگلیسی ↔ فارسی</title>
+
+    <!-- فایل CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>دیکشنری انگلیسی ↔ فارسی</h1>
+        <p>کلمه‌ی انگلیسی را تایپ کنید تا معنی و تلفظ آن را ببینید</p>
+    </header>
+
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Words Here..."
+            autocomplete="off"
+        >
+
+        <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="history" id="historySection" style="display:none;">
+        <h3>🕐 جستجوهای اخیر</h3>
+        <div class="history-chips" id="historyChips"></div>
+    </div>
+
+    <div class="word-count" id="wordCount"></div>
+</div>
+
+<script>
+const DICTIONARY = {
+  "hello": { phonetic: "/həˈloʊ/", pos: "تعجبی", meanings: ["سلام"], example: {en: "Hello! How are you?", fa: "سلام! حالت چطوره؟"} },
+  "goodbye": { phonetic: "/ˌɡʊdˈbaɪ/", pos: "تعجبی", meanings: ["خداحافظ"], example: {en: "Goodbye, see you tomorrow.", fa: "خداحافظ، فردا می‌بینمت."} },
+  "book": { phonetic: "/bʊk/", pos: "اسم", meanings: ["کتاب", "(فعل) رزرو کردن"], example: {en: "I am reading a book.", fa: "من یک کتاب می‌خوانم."} },
+  "water": { phonetic: "/ˈwɔːtər/", pos: "اسم", meanings: ["آب"], example: {en: "Can I have some water?", fa: "می‌توانم کمی آب داشته باشم؟"} },
+  "beautiful": { phonetic: "/ˈbjuːtɪfəl/", pos: "صفت", meanings: ["زیبا", "قشنگ"], example: {en: "She has a beautiful smile.", fa: "او لبخند زیبایی دارد."} },
+  "house": { phonetic: "/haʊs/", pos: "اسم", meanings: ["خانه"], example: {en: "This is my house.", fa: "این خانه‌ی من است."} },
+  "friend": { phonetic: "/frɛnd/", pos: "اسم", meanings: ["دوست"], example: {en: "He is my best friend.", fa: "او بهترین دوست من است."} },
+  "love": { phonetic: "/lʌv/", pos: "اسم/فعل", meanings: ["عشق", "دوست داشتن", "عاشق بودن"], example: {en: "I love my family.", fa: "من خانواده‌ام را دوست دارم."} },
+  "time": { phonetic: "/taɪm/", pos: "اسم", meanings: ["زمان", "وقت"], example: {en: "What time is it?", fa: "ساعت چند است؟"} },
+  "food": { phonetic: "/fuːd/", pos: "اسم", meanings: ["غذا"], example: {en: "The food is delicious.", fa: "غذا خوشمزه است."} },
+  "school": { phonetic: "/skuːl/", pos: "اسم", meanings: ["مدرسه"], example: {en: "I go to school every day.", fa: "من هر روز به مدرسه می‌روم."} },
+  "happy": { phonetic: "/ˈhæpi/", pos: "صفت", meanings: ["خوشحال", "شاد"], example: {en: "She looks very happy today.", fa: "او امروز خیلی خوشحال به نظر می‌رسد."} },
+  "sad": { phonetic: "/sæd/", pos: "صفت", meanings: ["ناراحت", "غمگین"], example: {en: "Why are you sad?", fa: "چرا ناراحتی؟"} },
+  "work": { phonetic: "/wɜːrk/", pos: "اسم/فعل", meanings: ["کار", "کار کردن"], example: {en: "I work in an office.", fa: "من در یک اداره کار می‌کنم."} },
+  "money": { phonetic: "/ˈmʌni/", pos: "اسم", meanings: ["پول"], example: {en: "I don't have much money.", fa: "من پول زیادی ندارم."} },
+  "family": { phonetic: "/ˈfæməli/", pos: "اسم", meanings: ["خانواده"], example: {en: "My family is very important to me.", fa: "خانواده‌ام برایم بسیار مهم است."} },
+  "city": { phonetic: "/ˈsɪti/", pos: "اسم", meanings: ["شهر"], example: {en: "Tehran is a big city.", fa: "تهران شهر بزرگی است."} },
+  "country": { phonetic: "/ˈkʌntri/", pos: "اسم", meanings: ["کشور", "روستا"], example: {en: "Iran is my country.", fa: "ایران کشور من است."} },
+  "language": { phonetic: "/ˈlæŋɡwɪdʒ/", pos: "اسم", meanings: ["زبان"], example: {en: "English is an international language.", fa: "انگلیسی یک زبان بین‌المللی است."} },
+  "learn": { phonetic: "/lɜːrn/", pos: "فعل", meanings: ["یاد گرفتن"], example: {en: "I want to learn English.", fa: "می‌خواهم انگلیسی یاد بگیرم."} },
+  "teach": { phonetic: "/tiːtʃ/", pos: "فعل", meanings: ["یاد دادن", "تدریس کردن"], example: {en: "She teaches math.", fa: "او ریاضی تدریس می‌کند."} },
+  "study": { phonetic: "/ˈstʌdi/", pos: "فعل/اسم", meanings: ["درس خواندن", "مطالعه"], example: {en: "I study every night.", fa: "من هر شب درس می‌خوانم."} },
+  "good": { phonetic: "/ɡʊd/", pos: "صفت", meanings: ["خوب"], example: {en: "This is a good idea.", fa: "این ایده‌ی خوبی است."} },
+  "bad": { phonetic: "/bæd/", pos: "صفت", meanings: ["بد"], example: {en: "That was a bad decision.", fa: "آن تصمیم بدی بود."} },
+  "big": { phonetic: "/bɪɡ/", pos: "صفت", meanings: ["بزرگ"], example: {en: "It's a big house.", fa: "آن خانه‌ی بزرگی است."} },
+  "small": { phonetic: "/smɔːl/", pos: "صفت", meanings: ["کوچک"], example: {en: "I have a small dog.", fa: "من یک سگ کوچک دارم."} },
+  "fast": { phonetic: "/fæst/", pos: "صفت/قید", meanings: ["سریع", "تند"], example: {en: "He runs very fast.", fa: "او خیلی سریع می‌دوید."} },
+  "slow": { phonetic: "/sloʊ/", pos: "صفت", meanings: ["آهسته", "کند"], example: {en: "The train is slow today.", fa: "قطار امروز کند است."} },
+  "new": { phonetic: "/nuː/", pos: "صفت", meanings: ["جدید", "نو"], example: {en: "I bought a new phone.", fa: "من یک گوشی جدید خریدم."} },
+  "old": { phonetic: "/oʊld/", pos: "صفت", meanings: ["قدیمی", "پیر"], example: {en: "This is an old building.", fa: "این یک ساختمان قدیمی است."} },
+  "morning": { phonetic: "/ˈmɔːrnɪŋ/", pos: "اسم", meanings: ["صبح"], example: {en: "Good morning!", fa: "صبح بخیر!"} },
+  "night": { phonetic: "/naɪt/", pos: "اسم", meanings: ["شب"], example: {en: "Good night.", fa: "شب بخیر."} },
+  "day": { phonetic: "/deɪ/", pos: "اسم", meanings: ["روز"], example: {en: "Have a nice day.", fa: "روز خوبی داشته باشی."} },
+  "year": { phonetic: "/jɪr/", pos: "اسم", meanings: ["سال"], example: {en: "Happy new year!", fa: "سال نو مبارک!"} },
+  "world": { phonetic: "/wɜːrld/", pos: "اسم", meanings: ["دنیا", "جهان"], example: {en: "She traveled around the world.", fa: "او به دور دنیا سفر کرد."} },
+  "life": { phonetic: "/laɪf/", pos: "اسم", meanings: ["زندگی"], example: {en: "Life is beautiful.", fa: "زندگی زیباست."} },
+  "music": { phonetic: "/ˈmjuːzɪk/", pos: "اسم", meanings: ["موسیقی"], example: {en: "I love listening to music.", fa: "من عاشق گوش دادن به موسیقی هستم."} },
+  "movie": { phonetic: "/ˈmuːvi/", pos: "اسم", meanings: ["فیلم"], example: {en: "Let's watch a movie tonight.", fa: "بیا امشب یک فیلم تماشا کنیم."} },
+  "computer": { phonetic: "/kəmˈpjuːtər/", pos: "اسم", meanings: ["کامپیوتر", "رایانه"], example: {en: "I use my computer for work.", fa: "من از کامپیوترم برای کار استفاده می‌کنم."} },
+  "phone": { phonetic: "/foʊn/", pos: "اسم", meanings: ["تلفن", "گوشی"], example: {en: "My phone battery is low.", fa: "باتری گوشی من کم است."} },
+  "internet": { phonetic: "/ˈɪntərnɛt/", pos: "اسم", meanings: ["اینترنت"], example: {en: "The internet is very fast here.", fa: "اینترنت اینجا خیلی سریع است."} },
+  "travel": { phonetic: "/ˈtrævəl/", pos: "فعل/اسم", meanings: ["سفر کردن", "سفر"], example: {en: "I love to travel.", fa: "من عاشق سفر کردن هستم."} },
+  "eat": { phonetic: "/iːt/", pos: "فعل", meanings: ["خوردن"], example: {en: "Let's eat lunch together.", fa: "بیا با هم ناهار بخوریم."} },
+  "drink": { phonetic: "/drɪŋk/", pos: "فعل/اسم", meanings: ["نوشیدن", "نوشیدنی"], example: {en: "Would you like something to drink?", fa: "چیزی برای نوشیدن می‌خوای؟"} },
+  "sleep": { phonetic: "/sliːp/", pos: "فعل/اسم", meanings: ["خوابیدن", "خواب"], example: {en: "I need to sleep early tonight.", fa: "امشب باید زود بخوابم."} },
+  "run": { phonetic: "/rʌn/", pos: "فعل", meanings: ["دویدن"], example: {en: "He runs every morning.", fa: "او هر روز صبح می‌دود."} },
+  "walk": { phonetic: "/wɔːk/", pos: "فعل/اسم", meanings: ["راه رفتن", "پیاده‌روی"], example: {en: "We walked to the park.", fa: "ما تا پارک پیاده رفتیم."} },
+  "speak": { phonetic: "/spiːk/", pos: "فعل", meanings: ["صحبت کردن"], example: {en: "Do you speak English?", fa: "آیا انگلیسی صحبت می‌کنی؟"} },
+  "listen": { phonetic: "/ˈlɪsən/", pos: "فعل", meanings: ["گوش دادن"], example: {en: "Please listen carefully.", fa: "لطفا با دقت گوش بده."} },
+  "write": { phonetic: "/raɪt/", pos: "فعل", meanings: ["نوشتن"], example: {en: "I write in my diary every day.", fa: "من هر روز در دفترچه‌خاطراتم می‌نویسم."} },
+  "read": { phonetic: "/riːd/", pos: "فعل", meanings: ["خواندن"], example: {en: "She reads many books.", fa: "او کتاب‌های زیادی می‌خواند."} },
+  "think": { phonetic: "/θɪŋk/", pos: "فعل", meanings: ["فکر کردن"], example: {en: "I think you are right.", fa: "فکر می‌کنم حق با توست."} },
+  "know": { phonetic: "/noʊ/", pos: "فعل", meanings: ["دانستن", "شناختن"], example: {en: "I know the answer.", fa: "من جواب را می‌دانم."} },
+  "want": { phonetic: "/wɑːnt/", pos: "فعل", meanings: ["خواستن"], example: {en: "I want a cup of coffee.", fa: "من یک فنجان قهوه می‌خواهم."} },
+  "need": { phonetic: "/niːd/", pos: "فعل/اسم", meanings: ["نیاز داشتن", "نیاز"], example: {en: "I need your help.", fa: "من به کمک تو نیاز دارم."} },
+  "like": { phonetic: "/laɪk/", pos: "فعل/حرف اضافه", meanings: ["دوست داشتن", "مانند"], example: {en: "I like this song.", fa: "من این آهنگ را دوست دارم."} },
+  "give": { phonetic: "/ɡɪv/", pos: "فعل", meanings: ["دادن"], example: {en: "Can you give me that book?", fa: "می‌توانی آن کتاب را به من بدهی؟"} },
+  "take": { phonetic: "/teɪk/", pos: "فعل", meanings: ["گرفتن", "بردن"], example: {en: "Please take a seat.", fa: "لطفا بنشینید."} },
+  "make": { phonetic: "/meɪk/", pos: "فعل", meanings: ["ساختن", "درست کردن"], example: {en: "She made a cake.", fa: "او یک کیک درست کرد."} },
+  "see": { phonetic: "/siː/", pos: "فعل", meanings: ["دیدن"], example: {en: "I can see the mountain.", fa: "من می‌توانم کوه را ببینم."} },
+  "go": { phonetic: "/ɡoʊ/", pos: "فعل", meanings: ["رفتن"], example: {en: "Let's go to the beach.", fa: "بیا به ساحل برویم."} },
+  "come": { phonetic: "/kʌm/", pos: "فعل", meanings: ["آمدن"], example: {en: "Please come here.", fa: "لطفا اینجا بیا."} },
+  "play": { phonetic: "/pleɪ/", pos: "فعل/اسم", meanings: ["بازی کردن", "نواختن", "بازی"], example: {en: "Children love to play outside.", fa: "بچه‌ها عاشق بازی کردن بیرون از خانه هستند."} },
+  "buy": { phonetic: "/baɪ/", pos: "فعل", meanings: ["خریدن"], example: {en: "I want to buy a new car.", fa: "می‌خواهم یک ماشین جدید بخرم."} },
+  "sell": { phonetic: "/sɛl/", pos: "فعل", meanings: ["فروختن"], example: {en: "They sell fresh vegetables.", fa: "آن‌ها سبزیجات تازه می‌فروشند."} },
+  "open": { phonetic: "/ˈoʊpən/", pos: "فعل/صفت", meanings: ["باز کردن", "باز"], example: {en: "Please open the window.", fa: "لطفا پنجره را باز کن."} },
+  "close": { phonetic: "/kloʊz/", pos: "فعل/صفت", meanings: ["بستن", "نزدیک"], example: {en: "Close the door, please.", fa: "لطفا در را ببند."} },
+  "start": { phonetic: "/stɑːrt/", pos: "فعل/اسم", meanings: ["شروع کردن", "شروع"], example: {en: "The movie starts at 8 PM.", fa: "فیلم ساعت ۸ شب شروع می‌شود."} },
+  "finish": { phonetic: "/ˈfɪnɪʃ/", pos: "فعل", meanings: ["تمام کردن", "پایان دادن"], example: {en: "I finished my homework.", fa: "تکالیفم را تمام کردم."} },
+  "help": { phonetic: "/hɛlp/", pos: "فعل/اسم", meanings: ["کمک کردن", "کمک"], example: {en: "Can you help me with this?", fa: "می‌توانی در این کار به من کمک کنی؟"} },
+  "understand": { phonetic: "/ˌʌndərˈstænd/", pos: "فعل", meanings: ["فهمیدن", "درک کردن"], example: {en: "I don't understand this question.", fa: "من این سوال را نمی‌فهمم."} },
+  "remember": { phonetic: "/rɪˈmɛmbər/", pos: "فعل", meanings: ["به یاد آوردن", "یادآوری کردن"], example: {en: "Do you remember me?", fa: "آیا مرا یادت هست؟"} },
+  "forget": { phonetic: "/fərˈɡɛt/", pos: "فعل", meanings: ["فراموش کردن"], example: {en: "I always forget his name.", fa: "همیشه اسمش را فراموش می‌کنم."} },
+  "believe": { phonetic: "/bɪˈliːv/", pos: "فعل", meanings: ["باور کردن", "اعتقاد داشتن"], example: {en: "I believe in you.", fa: "من به تو اعتقاد دارم."} },
+  "hope": { phonetic: "/hoʊp/", pos: "فعل/اسم", meanings: ["امید داشتن", "امید"], example: {en: "I hope you feel better soon.", fa: "امیدوارم زودتر حالت بهتر شود."} },
+  "dream": { phonetic: "/driːm/", pos: "اسم/فعل", meanings: ["رویا", "خواب دیدن", "آرزو کردن"], example: {en: "Follow your dreams.", fa: "رویاهایت را دنبال کن."} },
+  "fear": { phonetic: "/fɪr/", pos: "اسم/فعل", meanings: ["ترس", "ترسیدن"], example: {en: "She has no fear of heights.", fa: "او از ارتفاع نمی‌ترسد."} },
+  "strong": { phonetic: "/strɔːŋ/", pos: "صفت", meanings: ["قوی", "محکم"], example: {en: "He is very strong.", fa: "او خیلی قوی است."} },
+  "weak": { phonetic: "/wiːk/", pos: "صفت", meanings: ["ضعیف"], example: {en: "I feel weak today.", fa: "امروز احساس ضعف می‌کنم."} },
+  "rich": { phonetic: "/rɪtʃ/", pos: "صفت", meanings: ["ثروتمند", "غنی"], example: {en: "He is a rich man.", fa: "او مرد ثروتمندی است."} },
+  "poor": { phonetic: "/pʊr/", pos: "صفت", meanings: ["فقیر", "ضعیف"], example: {en: "They help poor families.", fa: "آن‌ها به خانواده‌های فقیر کمک می‌کنند."} },
+  "beautiful2_placeholder": null
+};
+delete DICTIONARY.beautiful2_placeholder;
+
+let history = [];
+let currentUtterance = null;
+
+const input = document.getElementById('searchInput');
+const suggestionsBox = document.getElementById('suggestions');
+const resultDiv = document.getElementById('result');
+const historySection = document.getElementById('historySection');
+const historyChips = document.getElementById('historyChips');
+const wordCountDiv = document.getElementById('wordCount');
+
+wordCountDiv.textContent = `📚 ${Object.keys(DICTIONARY).length} کلمه در بانک واژگان`;
+
+function normalize(str) {
+  return str.trim().toLowerCase();
+}
+
+function renderEmpty() {
+  resultDiv.innerHTML = `
+    <div class="card">
+      <div class="empty-state">
+        <span class="emoji">📘</span>
+        یک کلمه‌ی انگلیسی تایپ کن تا معنی، تلفظ نوشتاری و صوتی آن را ببینی
+      </div>
+    </div>
+  `;
+}
+
+function renderNotFound(word) {
+  resultDiv.innerHTML = `
+    <div class="card">
+      <div class="not-found">
+        <span class="emoji">🤔</span>
+        کلمه‌ی <span class="word-en-nf">"${escapeHtml(word)}"</span> در بانک واژگان پیدا نشد.
+        <br><br>
+        می‌توانی همچنان روی دکمه‌ی زیر کلیک کنی تا تلفظ آن را بشنوی:
+        <br><br>
+        <button class="speak-btn" style="width:auto;border-radius:14px;padding:10px 20px;display:inline-flex;gap:8px;" onclick="speakWord('${escapeJs(word)}', this)">
+          🔊 <span style="font-size:0.95rem;">شنیدن تلفظ</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function escapeJs(str) {
+  return str.replace(/'/g, "\\'");
+}
+
+function renderWord(word) {
+  const entry = DICTIONARY[word];
+  const meaningsHtml = entry.meanings.map((m, i) => `
+    <div class="meaning-item">
+      <span class="meaning-num">${i + 1}</span>
+      <span class="meaning-text">${escapeHtml(m)}</span>
+    </div>
+  `).join('');
+
+  const exampleHtml = entry.example ? `
+    <div class="example">
+      <div class="example-en">${escapeHtml(entry.example.en)}</div>
+      <div class="example-fa">${escapeHtml(entry.example.fa)}</div>
+    </div>
+  ` : '';
+
+  resultDiv.innerHTML = `
+    <div class="card">
+      <div class="word-row">
+        <span class="word-en">${escapeHtml(word)}</span>
+        <button class="speak-btn" id="speakBtn" onclick="speakWord('${escapeJs(word)}', this)" title="پخش تلفظ">
+          🔊
+        </button>
+      </div>
+      <div class="phonetic">${escapeHtml(entry.phonetic)}</div>
+      <div class="pos-tag">${escapeHtml(entry.pos)}</div>
+      <div class="divider"></div>
+      <div class="meanings">${meaningsHtml}</div>
+      ${exampleHtml}
+    </div>
+  `;
+}
+
+function speakWord(word, btnEl) {
+  if (!('speechSynthesis' in window)) {
+    alert('متاسفانه پخش صوتی در این مرورگر پشتیبانی نمی‌شود.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.9;
+
+  if (btnEl) btnEl.classList.add('playing');
+  utter.onend = () => { if (btnEl) btnEl.classList.remove('playing'); };
+  utter.onerror = () => { if (btnEl) btnEl.classList.remove('playing'); };
+
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
+function addToHistory(word) {
+  history = history.filter(w => w !== word);
+  history.unshift(word);
+  if (history.length > 8) history = history.slice(0, 8);
+  renderHistory();
+}
+
+function renderHistory() {
+  if (history.length === 0) {
+    historySection.style.display = 'none';
+    return;
+  }
+  historySection.style.display = 'block';
+  historyChips.innerHTML = history.map(w =>
+    `<span class="chip" onclick="selectWord('${escapeJs(w)}')">${escapeHtml(w)}</span>`
+  ).join('');
+}
+
+function selectWord(word) {
+  input.value = word;
+  suggestionsBox.classList.remove('show');
+  doSearch(word, true);
+}
+window.selectWord = selectWord;
+window.speakWord = speakWord;
+
+function doSearch(rawWord, fromSelection) {
+  const word = normalize(rawWord);
+  if (!word) {
+    renderEmpty();
+    return;
+  }
+  if (DICTIONARY[word]) {
+    renderWord(word);
+    addToHistory(word);
+  } else {
+    renderNotFound(rawWord.trim());
+  }
+}
+
+function updateSuggestions(query) {
+  const q = normalize(query);
+  if (!q) {
+    suggestionsBox.classList.remove('show');
+    suggestionsBox.innerHTML = '';
+    return;
+  }
+  const matches = Object.keys(DICTIONARY)
+    .filter(w => w.startsWith(q))
+    .slice(0, 6);
+
+  if (matches.length === 0) {
+    suggestionsBox.classList.remove('show');
+    suggestionsBox.innerHTML = '';
+    return;
+  }
+
+  suggestionsBox.innerHTML = matches.map(w => `
+    <div class="suggestion-item" onclick="selectWord('${escapeJs(w)}')">
+      <span class="suggestion-word">${escapeHtml(w)}</span>
+      <span class="suggestion-fa">${escapeHtml(DICTIONARY[w].meanings[0])}</span>
+    </div>
+  `).join('');
+  suggestionsBox.classList.add('show');
+}
+
+input.addEventListener('input', (e) => {
+  updateSuggestions(e.target.value);
+});
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    suggestionsBox.classList.remove('show');
+    doSearch(input.value);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-box')) {
+    suggestionsBox.classList.remove('show');
+  }
+});
+
+renderEmpty();
+</script>
+
+</body>
+</html>
